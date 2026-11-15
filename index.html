@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/new-version/Style.css">
+  <link rel="stylesheet" href="Style.css">
 </head>
 <body>
   <div class="announcement"><strong>Temu finds, made simple.</strong> &nbsp; Send us a product link, get a confirmed amount, and pay before we order.</div>
@@ -112,8 +112,6 @@
         try { localStorage.setItem(key, JSON.stringify(value)); }
         catch (error) { console.error("Could not save marketplace data in this browser.", error); toast("Couldn't save changes. Check your browser storage."); }
       };
-      localStorage.removeItem("gannaaneba_accounts");
-      localStorage.removeItem("gannaaneba_session");
       let products = [];
       let cart = read("gannaaneba_cart", []);
       let session = null;
@@ -134,7 +132,11 @@
         clearTimeout(toast.timer);
         toast.timer = setTimeout(() => node.classList.remove("show"), 2800);
       };
+      const isLocalPreview = location.protocol === "file:" || new URLSearchParams(location.search).has("preview");
       async function api(path, options = {}) {
+        if (isLocalPreview) {
+          throw new Error("This local preview is read-only. Account, order, and seller tools need the Gannaaneba server.");
+        }
         const requestOptions = { method: options.method || "GET", credentials: "same-origin", headers: {} };
         if (options.signal) requestOptions.signal = options.signal;
         if (options.body !== undefined) {
@@ -146,7 +148,7 @@
           response = await fetch(path, requestOptions);
         } catch (error) {
           if (error instanceof TypeError) {
-            throw new Error("Can't reach the Gannaaneba server. Run .\\start-local.ps1 in PowerShell, keep that window open, then refresh this page.");
+            throw new Error("Can't reach the Gannaaneba server. Make sure the website's API server is available, then refresh this page.");
           }
           throw error;
         }
@@ -304,6 +306,14 @@
           </div>`, true);
       }
       async function showStore(storeName) {
+        if (isLocalPreview) {
+          const storeProducts = products.filter(product => product.store === storeName);
+          openModal(`${modalHeader(escapeHTML(storeName), "Sample listings from this independent shop.", "Preview shop")}
+            <div class="store-profile"><div class="eyebrow">Meet the shop</div><h2>${escapeHTML(storeName)}</h2><p>Sample shop profile. Store details and contact options are available when the Gannaaneba server is connected.</p></div>
+            <div class="admin-section-head"><h3>Products &amp; services from this store</h3></div>
+            <div class="product-grid store-product-grid">${storeProducts.map(product => renderProductCard(product)).join("")}</div>`, true);
+          return;
+        }
         openModal(`${modalHeader(escapeHTML(storeName), "Loading store details and available products…", "Independent shop")}<div class="empty-state">Loading this store…</div>`, true);
         try {
           const result = await api(`/api/stores?name=${encodeURIComponent(storeName)}`);
@@ -535,27 +545,37 @@
       $("#year").textContent = new Date().getFullYear();
       renderCategories();
       updateHeader();
-      if (location.protocol === "file:") {
-        $("#productGrid").innerHTML = `<div class="empty-state">Opening the Gannaaneba portal… <a href="http://127.0.0.1:3000/" style="color:var(--green);font-weight:700;text-decoration:underline">Continue if you aren't redirected</a>.</div>`;
-        location.replace("http://127.0.0.1:3000/");
-        return;
-      }
-      $("#productGrid").innerHTML = `<div class="empty-state">Connecting to the marketplace…</div>`;
-      (async () => {
-        try {
-          products = (await api("/api/products")).products;
-          renderProducts();
+      if (isLocalPreview) {
+        $(".request-disclaimer").textContent += " This local preview uses sample listings; accounts and order requests need the Gannaaneba server.";
+        products = [
+          { id: "preview-woven-tote", name: "Handwoven everyday tote", store: "Maldive Loom", category: "Fashion", price: 385, rating: "4.9", badge: "Made locally", description: "A roomy, handwoven tote for everyday errands and island days.", image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&w=800&q=85" },
+          { id: "preview-ceramic-vase", name: "Soft form ceramic vase", store: "Island Form Studio", category: "Home & Living", price: 290, rating: "5.0", badge: "Small batch", description: "A sculptural ceramic accent, made to bring a little calm to your home.", image: "https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=800&q=85" },
+          { id: "preview-art-print", name: "Lagoon study art print", store: "Atoll Paper Co.", category: "Art & Craft", price: 180, rating: "4.8", badge: "Local artist", description: "A vibrant island-inspired print, available from an independent local artist.", image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=800&q=85" },
+          { id: "preview-tableware", name: "Everyday stoneware set", store: "Island Form Studio", category: "Home & Living", price: 540, rating: "4.9", description: "A simple, tactile tableware set for relaxed meals at home.", image: "https://images.unsplash.com/photo-1490312278390-ab64016e0aa9?auto=format&fit=crop&w=800&q=85" },
+          { id: "preview-home-service", type: "service", name: "Home cleaning", store: "Bright Home Hulhumale", category: "Home Services", price: 250, rating: "5.0", badge: "Flexible booking", description: "A helping hand with regular or one-off home cleaning in Hulhumale.", image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&q=85" },
+          { id: "preview-tailoring", type: "service", name: "Clothing alterations", store: "Needle & Thread", category: "Repairs & Maintenance", price: 120, rating: "4.8", description: "Thoughtful repairs and alterations for your favourite pieces.", image: "https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=800&q=85" },
+          { id: "preview-art-lessons", type: "service", name: "Beginner art lessons", store: "Atoll Paper Co.", category: "Lessons & Coaching", price: 180, rating: "5.0", description: "Friendly one-to-one art sessions for beginners and curious creatives.", image: "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=85" }
+        ];
+        renderProducts();
+        $("#resultCount").textContent = "Preview listings";
+      } else {
+        $("#productGrid").innerHTML = `<div class="empty-state">Connecting to the marketplace…</div>`;
+        (async () => {
           try {
-            session = (await api("/api/me")).user;
+            products = (await api("/api/products")).products;
+            renderProducts();
+            try {
+              session = (await api("/api/me")).user;
+            } catch (error) {
+              if (error.status !== 401) throw error;
+            }
+            updateHeader();
           } catch (error) {
-            if (error.status !== 401) throw error;
+            $("#productGrid").innerHTML = `<div class="empty-state">Marketplace unavailable. Make sure the website's API server is available, then refresh this page.</div>`;
+            toast(error.message);
           }
-          updateHeader();
-        } catch (error) {
-          $("#productGrid").innerHTML = `<div class="empty-state">Marketplace unavailable. Run <strong>.\start-local.ps1</strong> in PowerShell and keep that window open, then refresh this page.</div>`;
-          toast(error.message);
-        }
-      })();
+        })();
+      }
 
       document.addEventListener("click", async event => {
         const target = event.target.closest("button");
@@ -783,6 +803,10 @@
           quantity: Number(data.get("quantity"))
         };
         if (!session) {
+          if (isLocalPreview) {
+            toast("Submitting Temu requests requires the Gannaaneba server.");
+            return;
+          }
           pendingTemuRequest = request;
           showRegistration("customer");
           return;
