@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#f5f2ea">
+    <meta name="description" content="Order your favourite Temu finds with local MVR pricing and trusted payment review from Gannaaneba.">
+    <title>Gannaaneba — Temu, made easy</title>
+    <link rel="stylesheet" href="./static/styles.css">
+    <script src="./static/app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/" aria-label="Gannaaneba home">
+        <span class="brand-mark">G</span>
+        <span>gannaaneba<span class="brand-period">.</span></span>
+      </a>
+      <nav class="header-nav">
+        <a href="#how-it-works">How it works</a>
+        <a href="#your-orders">My orders</a>
+        <button class="button button-outline button-small" id="account-action" type="button">Sign in</button>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-dot"></span> A little closer to the things you love</div>
+          <h1>Your Temu finds,<br>made <span class="headline-accent">easy.</span></h1>
+          <p>Send us a Temu link. We’ll work out your price in rufiyaa, and take care of the rest.</p>
+          <a class="button button-primary hero-button" href="#start-order">Start an order <span aria-hidden="true">↗</span></a>
+          <div class="hero-trust"><span class="trust-icon">✓</span> Clear prices&nbsp;&nbsp;·&nbsp;&nbsp; Personal service&nbsp;&nbsp;·&nbsp;&nbsp; MVR payments</div>
+        </div>
+        <div class="hero-art" aria-label="Shopping packages, illustrated">
+          <div class="art-sun"></div><div class="art-spark art-spark-one">✳</div><div class="art-spark art-spark-two">✳</div>
+          <div class="parcel parcel-back"><span>little things</span></div>
+          <div class="parcel parcel-front"><span class="parcel-stamp">G</span><span>good things<br>are on their way</span></div>
+          <div class="art-leaf leaf-one"></div><div class="art-leaf leaf-two"></div>
+          <div class="art-caption">a thoughtful little<br>delivery, just for you</div>
+        </div>
+      </section>
+
+      <section class="steps-section" id="how-it-works">
+        <div class="section-heading">
+          <div><div class="eyebrow">Simple as one, two, three</div><h2>From link to lovely.</h2></div>
+          <p>Every step is clear, and your order stays in one place.</p>
+        </div>
+        <div class="steps-grid">
+          <article class="step-card"><div class="step-number">01 <span>→</span></div><div class="step-icon step-icon-link">↗</div><h3>Share your find</h3><p>Paste a link to the Temu item you’d love us to order.</p></article>
+          <article class="step-card"><div class="step-number">02 <span>→</span></div><div class="step-icon step-icon-quote">MVR</div><h3>Know your price</h3><p>We’ll convert the USD price, add our service fee, and ask for your OK.</p></article>
+          <article class="step-card"><div class="step-number">03 <span>✓</span></div><div class="step-icon step-icon-parcel">♡</div><h3>Pay &amp; we’ll confirm</h3><p>Deposit to our account, send your slip, and we’ll confirm your payment.</p></article>
+        </div>
+      </section>
+
+      <section class="workspace-section" id="start-order">
+        <div class="section-heading workspace-heading" id="your-orders">
+          <div><div class="eyebrow">A little corner of your own</div><h2>Your orders.</h2></div>
+          <p>Sign in to place a new order and follow your price approval and payment.</p>
+        </div>
+        <div id="app-panel" class="app-panel"></div>
+      </section>
+
+      <section class="promise-banner">
+        <span class="promise-mark">✳</span>
+        <div><p class="promise-quote">“No guessing. No surprises. Just a clear price before you say yes.”</p><p class="promise-byline">The Gannaaneba promise</p></div>
+        <div class="promise-aside">Made for island<br>living <span>♡</span></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="brand footer-brand" href="/"><span class="brand-mark">G</span><span>gannaaneba<span class="brand-period">.</span></span></a>
+      <p>Your little link to the things you love.</p>
+      <button class="footer-admin-link" id="admin-action" type="button">Admin sign in</button>
+      <span class="footer-copyright">© <span id="year"></span> Gannaaneba</span>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
