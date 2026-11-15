@@ -154,7 +154,10 @@
         }
         const result = await response.json().catch(() => ({}));
         if (!response.ok) {
-          const error = new Error(result.error || "The server couldn't complete the request.");
+          const fallback = response.status === 404 && path.startsWith("/api/")
+            ? "The Gannaaneba API isn't available at this site. Static hosting such as GitHub Pages can't run login endpoints; deploy the API server to enable sign-in."
+            : "The server couldn't complete the request.";
+          const error = new Error(result.error || fallback);
           error.status = response.status;
           throw error;
         }
