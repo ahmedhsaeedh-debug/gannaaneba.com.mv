@@ -1,0 +1,6 @@
+__pycache__/
+*.py[cod]
+gannaaneba.db
+gannaaneba.db-shm
+gannaaneba.db-wal
+uploads/
