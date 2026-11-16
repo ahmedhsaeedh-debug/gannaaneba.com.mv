@@ -54,6 +54,25 @@ class GannaanebaFlowTests(unittest.TestCase):
         self.assertEqual(status, 200)
         return set_cookie.split(";", 1)[0]
 
+    def test_customer_can_sign_in_after_registration(self):
+        credentials = {
+            "island": "Malé",
+            "address": "H. Test, Malé",
+            "email": "signin@example.com",
+            "phone": "1234567",
+            "password": "customer-password",
+        }
+        status, _, _ = self.request("/api/register", "POST", credentials)
+        self.assertEqual(status, 200)
+
+        customer_cookie = self.sign_in(
+            "/api/login",
+            {"email": credentials["email"], "password": credentials["password"]},
+        )
+        status, body, _ = self.request("/api/me", cookie=customer_cookie)
+        self.assertEqual(status, 200)
+        self.assertEqual(json.loads(body)["user"]["role"], "customer")
+
     def test_customer_quote_and_payment_approval_flow(self):
         customer_cookie = self.sign_in(
             "/api/register",
